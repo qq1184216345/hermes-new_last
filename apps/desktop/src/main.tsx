@@ -72,12 +72,8 @@ if (winParam && TRANSPARENT_WINDOWS.has(winParam)) {
   document.head.appendChild(transparent)
 }
 
-if (winParam === 'overlay') {
-  void import('./app/pet-overlay/overlay-root').then(({ mountPetOverlay }) => mountPetOverlay())
-} else if (winParam === 'quick') {
+if (winParam === 'quick') {
   void import('./app/quick-entry/quick-entry-root').then(({ mountQuickEntry }) => mountQuickEntry())
-} else if (winParam === 'wake') {
-  void import('./app/wake-indicator/wake-indicator-root').then(({ mountWakeIndicator }) => mountWakeIndicator())
 } else if (winParam === 'intro') {
   void import('./components/intro-reveal/intro-root').then(({ mountIntroReveal }) => mountIntroReveal())
 } else {

@@ -109,7 +109,6 @@ import { useHudHandoff } from '../hud/handoff'
 import { ModelPickerOverlay } from '../model-picker-overlay'
 import { ModelVisibilityOverlay } from '../model-visibility-overlay'
 import { mainChatOccupied, openSession, openSessionFromPicker } from '../open-session'
-import { PetGenerateOverlay } from '../pet-generate/pet-generate-overlay'
 import { FileActionDialogs } from '../right-sidebar/file-actions'
 import { RemoteFolderPicker } from '../right-sidebar/files/remote-picker'
 import { resetProjectTreeState } from '../right-sidebar/files/use-project-tree'
@@ -123,7 +122,6 @@ import {
   SETTINGS_ROUTE,
   syncWorkspaceRoute
 } from '../routes'
-import { SessionImportView } from '../session-import'
 import { SessionPickerOverlay } from '../session-picker-overlay'
 import { SessionSwitcher } from '../session-switcher'
 import { useBackgroundQueueDrain } from '../session/hooks/use-background-queue-drain'
@@ -179,10 +177,9 @@ import { POOL_LIMITS_SETTINGS_ROUTE } from './wiring-routing'
 const AgentsView = lazy(async () => ({ default: (await import('../agents')).AgentsView }))
 const CommandCenterView = lazy(async () => ({ default: (await import('../command-center')).CommandCenterView }))
 const CronView = lazy(async () => ({ default: (await import('../cron')).CronView }))
-const WebhooksView = lazy(async () => ({ default: (await import('../webhooks')).WebhooksView }))
+const StarmapView = lazy(async () => ({ default: (await import('../starmap')).StarmapView }))
 const ProfilesView = lazy(async () => ({ default: (await import('../profiles')).ProfilesView }))
 const SettingsView = lazy(async () => ({ default: (await import('../settings')).SettingsView }))
-const StarmapView = lazy(async () => ({ default: (await import('../starmap')).StarmapView }))
 
 // Surfaces (the four wired panes), the render context + WiredPane, and the
 // WiringActions/WiringApi contracts all live in sibling modules — this file is
@@ -345,13 +342,12 @@ export function ContribWiring({ children }: { children: ReactNode }) {
     currentView,
     openAgents,
     openCommandCenterSection,
-    openStarmap,
     profilesOpen,
+    openStarmap,
     resetOverlayReturnRoute,
     settingsOpen,
     starmapOpen,
-    toggleCommandCenter,
-    webhooksOpen
+    toggleCommandCenter
   } = useOverlayRouting()
 
   const {
@@ -1381,7 +1377,6 @@ export function ContribWiring({ children }: { children: ReactNode }) {
       <BootFailureOverlay />
       <CommandPalette />
       <PluginInstallModal />
-      <PetGenerateOverlay />
       <SessionSwitcher />
       <FileActionDialogs />
       <McpInstallDeepLinkDialog />
@@ -1407,17 +1402,6 @@ export function ContribWiring({ children }: { children: ReactNode }) {
         </Suspense>
       )}
 
-      {currentView === 'session-import' && (
-        <SessionImportView
-          key={`${activeConnectionId}:${activeGatewayProfile}`}
-          onClose={closeOverlayToPreviousRoute}
-          onOpenSession={sessionId => {
-            closeOverlayToPreviousRoute()
-            openSession(sessionId, navigate, 'stack')
-          }}
-          owner={{ connectionId: activeConnectionId || 'local', profile: activeGatewayProfile }}
-        />
-      )}
 
       {commandCenterOpen && (
         <Suspense fallback={null}>
@@ -1446,11 +1430,6 @@ export function ContribWiring({ children }: { children: ReactNode }) {
         </Suspense>
       )}
 
-      {webhooksOpen && (
-        <Suspense fallback={null}>
-          <WebhooksView onClose={closeOverlayToPreviousRoute} />
-        </Suspense>
-      )}
 
       {profilesOpen && (
         <Suspense fallback={null}>
@@ -1463,6 +1442,7 @@ export function ContribWiring({ children }: { children: ReactNode }) {
           <StarmapView onClose={closeOverlayToPreviousRoute} />
         </Suspense>
       )}
+
 
       {/* Toasts above everything. */}
       <NotificationStack />

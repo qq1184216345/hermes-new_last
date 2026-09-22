@@ -226,6 +226,18 @@ _PLATFORM_ORDER: tuple[str, ...] = (
 )
 
 
+# ── 智满推定制：消息平台白名单 ───────────────────────────────────────────────
+# 只在「消息平台」页面展示这几个；其余平台的实现全部保留在仓库里（不配置就不激活），
+# 这样既不用去 160+ 个文件里剜实现，以后要开放某个平台也只是在这里加一行。
+# 内部平台（local / api_server / webhook / cron / relay）本就不出现在该页面。
+_ZMT_PLATFORM_ALLOWLIST: frozenset[str] = frozenset({
+    "dingtalk",   # 钉钉
+    "feishu",     # 飞书 / Lark
+    "qqbot",      # QQ Bot
+    "weixin",     # 个人微信
+})
+
+
 def _messaging_platform_catalog() -> tuple[dict[str, Any], ...]:
     """Build the messaging catalog from the gateway's Platform enum + plugin registry.
 
@@ -258,6 +270,9 @@ def _messaging_platform_catalog() -> tuple[dict[str, Any], ...]:
             continue
         seen.add(pid)
         entries.append(_build_catalog_entry(pid, plugin_map.get(pid)))
+
+    # 智满推定制：按白名单过滤（见 _ZMT_PLATFORM_ALLOWLIST）
+    entries = [e for e in entries if e["id"] in _ZMT_PLATFORM_ALLOWLIST]
 
     order = {pid: idx for idx, pid in enumerate(_PLATFORM_ORDER)}
     entries.sort(key=lambda e: (order.get(e["id"], len(_PLATFORM_ORDER)), e["name"].lower()))

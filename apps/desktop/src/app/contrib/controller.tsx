@@ -96,7 +96,7 @@ import { $terminalTakeover, setTerminalTakeover } from '../right-sidebar/store'
 import { $workspaceIsPage, WORKSPACE_PAGE_HEADER_AREA } from '../routes'
 
 import { DEFAULT_TREE, registerLayoutPresets } from './layout-presets'
-import { FilesPane, LogsPane, ReviewPaneContent } from './panes'
+import { FilesPane, LogsPane } from './panes'
 import { ContribWiring, WiredPane } from './wiring'
 
 /**
@@ -240,24 +240,6 @@ registry.registerMany([
       tabTitleText: () => translateNow('sidebar.files')
     },
     render: () => idle(<FilesPane />)
-  },
-  {
-    id: 'review',
-    area: 'panes',
-    title: translateNow('sidebar.review'),
-    // The second right sidebar: hidden until ⌘G ($reviewOpen) — bound below
-    // like the other chrome toggles; its zone collapses while hidden.
-    data: {
-      placement: 'right',
-      collapsible: true,
-      revealAliases: [REVIEW_PANE_ID],
-      width: FILE_BROWSER_DEFAULT_WIDTH,
-      minWidth: FILE_BROWSER_MIN_WIDTH,
-      maxWidth: FILE_BROWSER_MAX_WIDTH,
-      tabTitle: () => <LocalizedTabTitle select={t => t.sidebar.review} />,
-      tabTitleText: () => translateNow('sidebar.review')
-    },
-    render: () => idle(<ReviewPaneContent />)
   }
 ])
 
